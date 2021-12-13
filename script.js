@@ -35,7 +35,9 @@ const updateUI = async () => {
      signBtn.innerText = "Sign Out"
       signBtn.className = "btn btn-danger"
       signBtn.setAttribute("onclick", "logout()")
-      console.log(await auth0.getUser())
+      const user = await auth0.getUser()
+      var userId = user.sub;
+      console.log(userId)
   } else {
     signBtn.innerText = "Sign In"
     signBtn.className = "btn btn-primary"
