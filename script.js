@@ -1,4 +1,4 @@
-const HEROKU_API_ROOT_URL = "https://todolist8251.herokuapp.com";
+const HEROKU_API_ROOT_URL = "http://localhost:3000";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
 
 
@@ -10,11 +10,11 @@ function handleSign(e) {
   if (signBtn.innerText === "Sign In") {
       signBtn.innerText = "Sign Out"
       signBtn.className = "btn btn-danger"
-      // fetch(HEROKU_API_ROOT_URL + `/login`)
-      // .then((res) => res.json())
-      // .then((data) => {
-      //   console.log(data);
-      // })
+      fetch(HEROKU_API_ROOT_URL + `/login`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      })
       getList("false")
   }
   else {
