@@ -1,6 +1,6 @@
 const HEROKU_API_ROOT_URL = "https://todolist8251.herokuapp.com";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
-const user_url = `${HEROKU_API_ROOT_URL}/profile`;
+const user_url = `${HEROKU_API_ROOT_URL}/getProfile`;
 
 fetch(user_url).then((res) => res.json())
 .then((data) => {
