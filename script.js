@@ -10,12 +10,7 @@ function handleSign(e) {
   if (signBtn.innerText === "Sign In") {
       signBtn.innerText = "Sign Out"
       signBtn.className = "btn btn-danger"
-      fetch(HEROKU_API_ROOT_URL + `/login`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      })
-      getList("false")
+      
   }
   else {
     signBtn.innerText = "Sign In"
