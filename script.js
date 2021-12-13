@@ -1,34 +1,63 @@
-const HEROKU_API_ROOT_URL = "https://todolist8251.herokuapp.com";
+const HEROKU_API_ROOT_URL = "http://localhost:3000";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
 const user_url = `${HEROKU_API_ROOT_URL}/profile`;
 
-function getUser(){
-fetch(user_url).then((res) => res.json())
-.then((data) => {
-  console.log(data);
-});
+let auth0 = null
+
+window.onload = async () => {
+  await configureClient()
+  await processLoginState()
+  updateUI()
 }
 
+const configureClient = async () => {
+  auth0 = await createAuth0Client({
+    domain: "dev-wb32quj9.us.auth0.com",
+    client_id: "xTz2vpPOEIDCFlWHpltZSZVjep7bvZFG",
+  })
+}
 
-document.getElementById("signBtn").addEventListener("click", handleSign)
-
-function handleSign(e) {
-  const signBtn = e.target
-
-  if (signBtn.innerText === "Sign In") {
-      signBtn.innerText = "Sign Out"
-      signBtn.className = "btn btn-danger"
-      
+const processLoginState = async () => {
+  // Check code and state parameters
+  const query = window.location.search
+  if (query.includes("code=") && query.includes("state=")) {
+    // Process the login state
+    await auth0.handleRedirectCallback()
+    // Use replaceState to redirect the user away and remove the querystring parameters
+    window.history.replaceState({}, document.title, window.location.pathname)
   }
-  else {
+}
+
+const updateUI = async () => {
+  const isAuthenticated = await auth0.isAuthenticated()
+
+  if (isAuthenticated) {
+     signBtn.innerText = "Sign Out"
+      signBtn.className = "btn btn-danger"
+      signBtn.setAttribute("onclick", "logout()")
+      console.log(await auth0.getUser())
+  } else {
     signBtn.innerText = "Sign In"
     signBtn.className = "btn btn-primary"
     document.getElementById("list-container").innerHTML = ""
   }
 }
 
+const login = async () => {
+  await auth0.loginWithRedirect({
+    redirect_uri: window.location.href,
+  })
+}
+
+const logout = () => {
+  auth0.logout({
+    returnTo: window.location.href,
+  })
+}
+
+
 function getList(completed) {
-  fetch(toDo_url + "?" + `complete=${completed}`)
+  fetch(`${toDo_url}?complete=${completed}&email=${sessionStorage.getItem("email")}`)
     .then((res) => res.json())
     .then((list) => {
       renderCards(list);
@@ -57,6 +86,7 @@ function submitForm(event) {
 
   const item = document.getElementById("item").value;
   const dueDate = document.getElementById("date").value;
+  const email = sessionStorage.getItem('email')
 
   document.getElementById("item").value = "";
   document.getElementById("date").value = "";
@@ -64,6 +94,7 @@ function submitForm(event) {
   const toDo = {
     item,
     complete: "false",
+    email,
   };
 
   if (dueDate && dueDate.length !== 0) {
@@ -134,9 +165,11 @@ function renderCards(list) {
 
 function handleComplete(event) {
   const id = event.target.getAttribute("todoId");
+  const email = sessionStorage.getItem("email")
   const update = {
     _id: id,
     complete: "true",
+    email
   };
   fetch(toDo_url, {
     headers: {
@@ -154,12 +187,14 @@ function handleComplete(event) {
 function handleEdit(event) {
   const id = event.target.getAttribute("todoId");
   const newItemName = window.prompt("Enter new item name");
-  const newDueDate = window.prompt("Enter new due date");
+  const newDueDate = window.prompt("Enter new due date (yyyy-mm-dd");
+  const email = sessionStorage.getItem("email")
 
   const update = {
     _id: id,
     itemName: newItemName,
     dueDate: newDueDate,
+    email
   };
 
   fetch(toDo_url, {
@@ -176,11 +211,24 @@ function handleEdit(event) {
 }
 
 function handleDelete(event) {
-  const Id = event.target.getAttribute("todoId");
+  const id = event.target.getAttribute("todoId");
+  const email = sessionStorage.getItem("email")
 
-  fetch(toDo_url + "/" + Id, { method: "delete" })
+
+  const itemToDelete = {
+    _id: id,
+    email,
+  };
+
+  fetch(toDo_url, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "DELETE",
+    body: JSON.stringify(itemToDelete),
+  })
     .then((res) => res.json())
-    .then((destinations) => {
-      renderCards(destinations);
+    .then((list) => {
+      renderCards(list);
     });
 }
