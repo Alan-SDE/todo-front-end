@@ -38,6 +38,7 @@ const updateUI = async () => {
       const user = await auth0.getUser()
       var userId = user.sub;
       console.log(userId)
+      sessionStorage.setItem('userId', userId)
   } else {
     signBtn.innerText = "Sign In"
     signBtn.className = "btn btn-primary"
@@ -59,7 +60,7 @@ const logout = () => {
 
 
 function getList(completed) {
-  fetch(`${toDo_url}?complete=${completed}&email=${sessionStorage.getItem("email")}`)
+  fetch(`${toDo_url}?complete=${completed}&userId=${sessionStorage.getItem("userId")}`)
     .then((res) => res.json())
     .then((list) => {
       renderCards(list);
@@ -88,7 +89,7 @@ function submitForm(event) {
 
   const item = document.getElementById("item").value;
   const dueDate = document.getElementById("date").value;
-  const email = sessionStorage.getItem('email')
+  const userId = sessionStorage.getItem('userId')
 
   document.getElementById("item").value = "";
   document.getElementById("date").value = "";
@@ -96,7 +97,7 @@ function submitForm(event) {
   const toDo = {
     item,
     complete: "false",
-    email,
+    userId,
   };
 
   if (dueDate && dueDate.length !== 0) {
@@ -166,12 +167,12 @@ function renderCards(list) {
 }
 
 function handleComplete(event) {
-  const id = event.target.getAttribute("todoId");
-  const email = sessionStorage.getItem("email")
+  const id = event.target.getAttribute("todoId")
+  const userId = sessionStorage.getItem("userId")
   const update = {
     _id: id,
     complete: "true",
-    email
+    userId
   };
   fetch(toDo_url, {
     headers: {
@@ -190,13 +191,13 @@ function handleEdit(event) {
   const id = event.target.getAttribute("todoId");
   const newItemName = window.prompt("Enter new item name");
   const newDueDate = window.prompt("Enter new due date (yyyy-mm-dd");
-  const email = sessionStorage.getItem("email")
+  const userId = sessionStorage.getItem("userId")
 
   const update = {
     _id: id,
     itemName: newItemName,
     dueDate: newDueDate,
-    email
+    userId
   };
 
   fetch(toDo_url, {
@@ -214,12 +215,12 @@ function handleEdit(event) {
 
 function handleDelete(event) {
   const id = event.target.getAttribute("todoId");
-  const email = sessionStorage.getItem("email")
+  const userId = sessionStorage.getItem("userId")
 
 
   const itemToDelete = {
     _id: id,
-    email,
+    userId,
   };
 
   fetch(toDo_url, {
