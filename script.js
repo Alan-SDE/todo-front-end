@@ -1,6 +1,5 @@
-const HEROKU_API_ROOT_URL = "http://localhost:3000";
+const HEROKU_API_ROOT_URL = "https://todolist8251.herokuapp.com";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
-const user_url = `${HEROKU_API_ROOT_URL}/profile`;
 
 let auth0 = null
 
@@ -18,12 +17,9 @@ const configureClient = async () => {
 }
 
 const processLoginState = async () => {
-  // Check code and state parameters
   const query = window.location.search
   if (query.includes("code=") && query.includes("state=")) {
-    // Process the login state
     await auth0.handleRedirectCallback()
-    // Use replaceState to redirect the user away and remove the querystring parameters
     window.history.replaceState({}, document.title, window.location.pathname)
   }
 }
@@ -37,7 +33,6 @@ const updateUI = async () => {
       signBtn.setAttribute("onclick", "logout()")
       const user = await auth0.getUser()
       var userId = user.sub;
-      console.log(userId)
       sessionStorage.setItem('userId', userId)
       getList("false");
   } else {
