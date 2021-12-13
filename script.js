@@ -39,10 +39,12 @@ const updateUI = async () => {
       var userId = user.sub;
       console.log(userId)
       sessionStorage.setItem('userId', userId)
+      getList("false");
   } else {
     signBtn.innerText = "Sign In"
     signBtn.className = "btn btn-primary"
     document.getElementById("list-container").innerHTML = ""
+    sessionStorage.removeItem('userId');
   }
 }
 
