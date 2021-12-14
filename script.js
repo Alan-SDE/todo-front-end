@@ -87,7 +87,7 @@ function handleCompleted() {
 function submitForm(event) {
   event.preventDefault();
 
-  const item = document.getElementById("item").value;
+  const itemName = document.getElementById("item").value;
   const dueDate = document.getElementById("date").value;
   const userId = sessionStorage.getItem("userId");
 
@@ -95,7 +95,7 @@ function submitForm(event) {
   document.getElementById("date").value = "";
 
   const toDo = {
-    item,
+    itemName,
     complete: "false",
     userId,
   };
@@ -123,7 +123,7 @@ function renderCards(list) {
   todoListContainer.innerHTML = "";
 
   list.forEach((entry) => {
-    const { _id, item, dueDate, complete } = entry;
+    const { _id, itemName, dueDate, complete } = entry;
 
     const card = document.createElement("div");
     card.className = "card w-100";
@@ -132,7 +132,7 @@ function renderCards(list) {
                   <div class="container">
                     <div class="row card-body" id=${_id}>
                       <div class="col-5">
-                        <h5 class="card-title">${item}</h5>
+                        <h5 class="card-title">${itemName}</h5>
                         <p class="card-text">${dueDate}</p>
                         </div
                       </div>
