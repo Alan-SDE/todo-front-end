@@ -136,7 +136,7 @@ function renderCards(list) {
                         <p class="card-text">${dueDate}</p>
                         </div
                       </div>
-                      <div class="col-4" id="car-btn-container">
+                      <div class="col-4 align-self-center" id="car-btn-container">
                       </div>
                       <div class="col-3">
                       </div>
