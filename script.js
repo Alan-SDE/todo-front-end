@@ -1,6 +1,8 @@
 const HEROKU_API_ROOT_URL = "https://todo-final-project-62.herokuapp.com";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
 
+// AUTHENTICATION
+
 let auth0 = null;
 
 window.onload = async () => {
@@ -55,21 +57,7 @@ const logout = () => {
   });
 };
 
-function getList(completed) {
-  fetch(
-    `${toDo_url}?complete=${completed}&userId=${sessionStorage.getItem(
-      "userId"
-    )}`
-  )
-    .then((res) => res.json())
-    .then((list) => {
-      renderCards(list);
-    });
-}
-
-document
-  .getElementById("form_submit_btn")
-  .addEventListener("click", submitForm);
+// LIST NAVIGATION
 
 document
   .getElementById("inProgress")
@@ -83,6 +71,12 @@ function handleInProgress() {
 function handleCompleted() {
   getList("true");
 }
+
+// FORM SUBMIT
+
+document
+  .getElementById("form_submit_btn")
+  .addEventListener("click", submitForm);
 
 function submitForm(event) {
   event.preventDefault();
@@ -117,6 +111,8 @@ function submitForm(event) {
     });
 }
 
+// RENDER CARDS
+
 function renderCards(list) {
   const todoListContainer = document.getElementById("list-container");
 
@@ -142,7 +138,6 @@ function renderCards(list) {
                       </div>
                     </div>
                   </div>`;
-                  
 
     todoListContainer.appendChild(card);
 
@@ -171,6 +166,20 @@ function renderCards(list) {
 
     document.getElementById(_id).children[1].appendChild(deleteBtn);
   });
+}
+
+// CRUD OPERATIONS
+
+function getList(completed) {
+  fetch(
+    `${toDo_url}?complete=${completed}&userId=${sessionStorage.getItem(
+      "userId"
+    )}`
+  )
+    .then((res) => res.json())
+    .then((list) => {
+      renderCards(list);
+    });
 }
 
 function handleComplete(event) {
