@@ -1,4 +1,4 @@
-const HEROKU_API_ROOT_URL = "http://localhost:3000";
+const HEROKU_API_ROOT_URL = "https://todo-final-project-62.herokuapp.com/";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
 
 let auth0 = null;
