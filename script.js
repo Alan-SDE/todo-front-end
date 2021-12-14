@@ -130,16 +130,16 @@ function renderCards(list) {
 
     card.innerHTML = `
                   <div class="container">
-                    <div class="row">
+                    <div class="row card-body" id=${_id}>
                       <div class="col-5">
-                        <div id=${_id} class="card-body">
-                          <h5 class="card-title">${item}</h5>
-                          <p class="card-text">${dueDate}</p>
+                        <h5 class="card-title">${item}</h5>
+                        <p class="card-text">${dueDate}</p>
                         </div
                       </div>
-                      <div class="col-4"><div id="car-btn-container"></div></div>
-
-                      <div class="col-3"></div>
+                      <div class="col-4" id="car-btn-container">
+                      </div>
+                      <div class="col-3">
+                      </div>
                     </div>
                   </div>`;
                   
@@ -159,8 +159,8 @@ function renderCards(list) {
       editBtn.innerText = "Edit";
       editBtn.addEventListener("click", handleEdit);
 
-      document.getElementById("car-btn-contaimer").appendChild(completeBtn);
-      document.getElementById("car-btn-contaimer").appendChild(editBtn);
+      document.getElementById(_id).children[1].appendChild(completeBtn);
+      document.getElementById(_id).children[1].appendChild(editBtn);
     }
 
     const deleteBtn = document.createElement("btn");
@@ -169,7 +169,7 @@ function renderCards(list) {
     deleteBtn.innerText = "Delete";
     deleteBtn.addEventListener("click", handleDelete);
 
-    document.getElementById("car-btn-contaimer").appendChild(deleteBtn);
+    document.getElementById(_id).children[1].appendChild(deleteBtn);
   });
 }
 
