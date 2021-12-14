@@ -14,4 +14,7 @@
     display: flex;
     justify-content: center;
 }
+.input{
+    margin-bottom: 20px;
+}
 
