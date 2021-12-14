@@ -1,63 +1,66 @@
 const HEROKU_API_ROOT_URL = "https://todolist8251.herokuapp.com";
 const toDo_url = `${HEROKU_API_ROOT_URL}/todo`;
 
-let auth0 = null
+let auth0 = null;
 
 window.onload = async () => {
-  await configureClient()
-  await processLoginState()
-  updateUI()
-}
+  await configureClient();
+  await processLoginState();
+  updateUI();
+};
 
 const configureClient = async () => {
   auth0 = await createAuth0Client({
     domain: "dev-wb32quj9.us.auth0.com",
     client_id: "xTz2vpPOEIDCFlWHpltZSZVjep7bvZFG",
-  })
-}
+  });
+};
 
 const processLoginState = async () => {
-  const query = window.location.search
+  const query = window.location.search;
   if (query.includes("code=") && query.includes("state=")) {
-    await auth0.handleRedirectCallback()
-    window.history.replaceState({}, document.title, window.location.pathname)
+    await auth0.handleRedirectCallback();
+    window.history.replaceState({}, document.title, window.location.pathname);
   }
-}
+};
 
 const updateUI = async () => {
-  const isAuthenticated = await auth0.isAuthenticated()
+  const isAuthenticated = await auth0.isAuthenticated();
 
   if (isAuthenticated) {
-     signBtn.innerText = "Sign Out"
-      signBtn.className = "btn btn-danger"
-      signBtn.setAttribute("onclick", "logout()")
-      const user = await auth0.getUser()
-      var userId = user.sub;
-      sessionStorage.setItem('userId', userId)
-      getList("false");
+    signBtn.innerText = "Sign Out";
+    signBtn.className = "btn btn-danger";
+    signBtn.setAttribute("onclick", "logout()");
+    const user = await auth0.getUser();
+    var userId = user.sub;
+    sessionStorage.setItem("userId", userId);
+    getList("false");
   } else {
-    signBtn.innerText = "Sign In"
-    signBtn.className = "btn btn-primary"
-    document.getElementById("list-container").innerHTML = ""
-    sessionStorage.removeItem('userId');
+    signBtn.innerText = "Sign In";
+    signBtn.className = "btn btn-primary";
+    document.getElementById("list-container").innerHTML = "";
+    sessionStorage.removeItem("userId");
   }
-}
+};
 
 const login = async () => {
   await auth0.loginWithRedirect({
     redirect_uri: window.location.href,
-  })
-}
+  });
+};
 
 const logout = () => {
   auth0.logout({
     returnTo: window.location.href,
-  })
-}
-
+  });
+};
 
 function getList(completed) {
-  fetch(`${toDo_url}?complete=${completed}&userId=${sessionStorage.getItem("userId")}`)
+  fetch(
+    `${toDo_url}?complete=${completed}&userId=${sessionStorage.getItem(
+      "userId"
+    )}`
+  )
     .then((res) => res.json())
     .then((list) => {
       renderCards(list);
@@ -86,7 +89,7 @@ function submitForm(event) {
 
   const item = document.getElementById("item").value;
   const dueDate = document.getElementById("date").value;
-  const userId = sessionStorage.getItem('userId')
+  const userId = sessionStorage.getItem("userId");
 
   document.getElementById("item").value = "";
   document.getElementById("date").value = "";
@@ -126,11 +129,20 @@ function renderCards(list) {
     card.className = "card w-100";
 
     card.innerHTML = `
-                  <div id=${_id} class="card-body">
-                      <h5 class="card-title">${item}</h5>
-                      <p class="card-text">${dueDate}</p>
-                      <div id="car-btn-container"></div>
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-5">
+                        <div id=${_id} class="card-body">
+                          <h5 class="card-title">${item}</h5>
+                          <p class="card-text">${dueDate}</p>
+                        </div
+                      </div>
+                      <div class="col-4"><div id="car-btn-container"></div></div>
+
+                      <div class="col-3"></div>
+                    </div>
                   </div>`;
+                  
 
     todoListContainer.appendChild(card);
 
@@ -146,9 +158,9 @@ function renderCards(list) {
       editBtn.setAttribute("todoId", _id);
       editBtn.innerText = "Edit";
       editBtn.addEventListener("click", handleEdit);
-      
-      document.getElementById(_id).children[2].appendChild(completeBtn);
-      document.getElementById(_id).children[2].appendChild(editBtn);
+
+      document.getElementById("car-btn-contaimer").appendChild(completeBtn);
+      document.getElementById("car-btn-contaimer").appendChild(editBtn);
     }
 
     const deleteBtn = document.createElement("btn");
@@ -157,19 +169,17 @@ function renderCards(list) {
     deleteBtn.innerText = "Delete";
     deleteBtn.addEventListener("click", handleDelete);
 
-    
-    document.getElementById(_id).children[2].appendChild(deleteBtn);
-    
+    document.getElementById("car-btn-contaimer").appendChild(deleteBtn);
   });
 }
 
 function handleComplete(event) {
-  const id = event.target.getAttribute("todoId")
-  const userId = sessionStorage.getItem("userId")
+  const id = event.target.getAttribute("todoId");
+  const userId = sessionStorage.getItem("userId");
   const update = {
     _id: id,
     complete: "true",
-    userId
+    userId,
   };
   fetch(toDo_url, {
     headers: {
@@ -188,13 +198,13 @@ function handleEdit(event) {
   const id = event.target.getAttribute("todoId");
   const newItemName = window.prompt("Enter new item name");
   const newDueDate = window.prompt("Enter new due date (yyyy-mm-dd");
-  const userId = sessionStorage.getItem("userId")
+  const userId = sessionStorage.getItem("userId");
 
   const update = {
     _id: id,
     itemName: newItemName,
     dueDate: newDueDate,
-    userId
+    userId,
   };
 
   fetch(toDo_url, {
@@ -212,8 +222,7 @@ function handleEdit(event) {
 
 function handleDelete(event) {
   const id = event.target.getAttribute("todoId");
-  const userId = sessionStorage.getItem("userId")
-
+  const userId = sessionStorage.getItem("userId");
 
   const itemToDelete = {
     _id: id,
